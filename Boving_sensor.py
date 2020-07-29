@@ -23,7 +23,7 @@ class Sensor:
                 failed_connection = True
                 self.e = e
         if failed_connection:
-            write_file(f_name='error.txt', msg='{} {} at {}'.format('error in connect:', self.e, datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")))
+            write_file(f_name='error.txt', msg='{} {} at {}{}'.format('error in connect:', self.e, datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S"),'\n'))
             print('wrote to error.txt! error in connect!') #can remove in final version
             quit()
     def disconnect(self):
@@ -38,7 +38,7 @@ class Sensor:
                 failed_disconnect = True
                 self.e = e
         if failed_disconnect:
-            write_file(f_name='error.txt', msg='{} {} at {}'.format('error in disconnect:',self.e, datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")))
+            write_file(f_name='error.txt', msg='{} {} at {}{}'.format('error in disconnect:',self.e, datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S"),'\n'))
             print('wrote to error.txt! error in disconnect!') #can remove in final version
             quit()
 
@@ -61,12 +61,12 @@ class ConductivitySensor(Sensor):
                         failed_conductivity = True
                         self.e = e
                 if failed_conductivity:
-                    write_file(f_name='error.txt', msg='{} {} at {}'.format('error in do_sample:', self.e, datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")))
+                    write_file(f_name='error.txt', msg='{} {} at {}{}'.format('error in do_sample:', self.e, datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S"),'\n'))
                     print('wrote to error.txt! error in Conductivity.get_sample!')
                     quit()
                 else:
                     write_file(f_name='cond_and_temp.txt', msg='{} Conductivity: {} Temperature: {}\n'.format(datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S"), cond_and_temp.split()[1], cond_and_temp.split()[3]))
-                    print('{} Conductivity: {} Temperature: {}\n'.format(datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S"), cond_and_temp.split()[1], cond_and_temp.split()[3]))
+                    print('sample done')
                 time.sleep(interval)
 
 class OxygenSensor(Sensor):
@@ -74,7 +74,7 @@ class OxygenSensor(Sensor):
         print('I will do the command for the oxygen sensor')
 
 
-conductivity = ConductivitySensor(port='COM6', baudrate='9600', timeout=5, wait_for=5)
+conductivity = ConductivitySensor(port='/dev/ttyUSB0', baudrate='9600', timeout=5, wait_for=5) #This port is for the rasp pi
 conductivity.connect()
-conductivity.do_sample(n_samples=6, interval=10)
+conductivity.do_sample(n_samples=3, interval=5)
 conductivity.disconnect()
