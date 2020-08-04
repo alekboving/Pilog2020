@@ -24,8 +24,8 @@ class Sensor:
 		        failed_connection = True
 		        self.e = e
 		if failed_connection:
-			write_file(f_name='error.txt', msg='{} {} at {}'.format('error in connect:', self.e, datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")))
-			print('wrote to error.txt! error in connect!')
+			write_file(f_name='error.txt', msg='{} {} at {}\n'.format('error in connect:', self.e, datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")))
+			print('wrote to error.txt! error in connect!') #can delete in final version
 			quit()
 		time.sleep(2)
 	def disconnect(self, wait_for=5):
@@ -42,7 +42,7 @@ class Sensor:
 				failed_disconnect = True
 				self.e = e
 		if failed_disconnect:
-			write_file(f_name='error.txt', msg='{} {} at {}'.format(self.e, datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")))
+			write_file(f_name='error.txt', msg='{} {} at {}\n'.format("Error in disconnect:",self.e, datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")))
 			print('wrote to error.txt! error in disconnect!')
 			quit()
 		time.sleep(2)
@@ -116,12 +116,12 @@ class OxygenSensor(Sensor):
 		time.sleep(2)
 
 
-conductivity = ConductivitySensor(port='/dev/ttyUSB0', baudrate='9600', timeout=5, wait_for=5)
+conductivity = ConductivitySensor(port='COM6', baudrate='9600', timeout=5, wait_for=5)
 conductivity.connect(wait_for=5)
 conductivity.do_sample(n_samples=6, interval=3, wait_for=40)
 conductivity.disconnect(wait_for=5)
 
-# oxygen = OxygenSensor(port='/dev/ttyUSB0', baudrate='9600', timeout=5, wait_for=5)
+# oxygen = OxygenSensor(port='/dev/ttyUSB0', baudrate='9600', timeout=5, wait_for=5) #will be a different port once pi is set up
 # oxygen.connect(wait_for=5)
 # oxygen.do_sample(n_samples=6, interval=3, wait_for=40)
 # oxygen.disconnect(wait_for=5)
