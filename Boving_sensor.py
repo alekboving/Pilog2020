@@ -24,10 +24,10 @@ class Sensor:
 		        failed_connection = True
 		        self.e = e
 		if failed_connection:
-			write_file(f_name='error.txt', msg='{} {} at {}'.format('error in connect:', self.e, datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")))
+			write_file(f_name='error.txt', msg='{} {} at {}\n'.format('error in connect:', self.e, datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")))
 			print('wrote to error.txt! error in connect!')
 			quit()
-		time.sleep(2)
+		time.sleep(2) #gives time for sensor to boot up if not connecting
 	def disconnect(self, wait_for=5):
 		self.wait_for = wait_for
 		self.ser.flushInput()
@@ -42,7 +42,7 @@ class Sensor:
 				failed_disconnect = True
 				self.e = e
 		if failed_disconnect:
-			write_file(f_name='error.txt', msg='{} {} at {}'.format(self.e, datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")))
+			write_file(f_name='error.txt', msg='{} {} at {}\n'.format('error in disconnect:',self.e, datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")))
 			print('wrote to error.txt! error in disconnect!')
 			quit()
 		time.sleep(2)
@@ -69,7 +69,7 @@ class Sensor:
 					self.e = e
 			if failed_conductivity:
 				write_file(f_name='error.txt', msg='{} {} at {}\n'.format('error in do_sample:', self.e, datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")))
-				print('wrote to error.txt! error in Conductivity.get_sample!')
+				print('wrote to error.txt! error in Conductivity.get_sample!') #can be removed in final version
 				quit()
 			else:
 				if len(sensor_data.split()) == 2:
@@ -83,7 +83,7 @@ class Sensor:
 sensor = Sensor(port='/dev/ttyUSB0', baudrate='9600', timeout=5, wait_for=5)
 sensor.connect(wait_for=5)
 #Conductivity
-sensor.do_sample(data_names=['Conductivity', 'Temperature'], n_samples=6, interval=3, wait_for=40)
+sensor.do_sample(data_names=['Conductivity', 'Temperature'], n_samples=6, interval=3, wait_for=40) #checks that both data sets are being compiled
 #Oxygen
 sensor.do_sample(data_names=['Oxygen', 'Saturation', 'Temperature'], n_samples=6, interval=3, wait_for=40)
-sensor.disconnect(wait_for=5)
+sensor.disconnect(wait_for=5) #disconnects sensor at end of program
