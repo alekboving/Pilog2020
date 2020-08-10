@@ -87,4 +87,3 @@ sensor.do_sample(data_names=['Conductivity', 'Temperature'], n_samples=6, interv
 #Oxygen
 sensor.do_sample(data_names=['Oxygen', 'Saturation', 'Temperature'], n_samples=6, interval=3, wait_for=40) #will have a different port once other board is created
 sensor.disconnect(wait_for=5)
-#test
