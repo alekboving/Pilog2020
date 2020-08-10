@@ -1,11 +1,11 @@
 import serial, time, datetime
 
-def write_file(f_name='error.txt', msg='you didn\'t pass any arguments to write_file'):
-	with open(f_name, 'a') as f:
+def write_file(f_name='error.txt', msg='you didn\'t pass any arguments to write_file'): #error function
+	with open('/home/pi/Ocean-Sensor/' + f_name, 'a') as f:
 		f.write(msg)
 
 class Sensor:
-	def __init__(self, port='/dev/ttyUSB0', baudrate='9600', timeout=5, wait_for=10):
+	def __init__(self, port='/dev/ttyUSB0', baudrate='9600', timeout=5, wait_for=10): #port currently set for raspberry pi
 		self.port = port
 		self.baudrate = baudrate
 		self.timeout = timeout
@@ -24,10 +24,10 @@ class Sensor:
 		        failed_connection = True
 		        self.e = e
 		if failed_connection:
-			write_file(f_name='error.txt', msg='{} {} at {}\n'.format('error in connect:', self.e, datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")))
+			write_file(f_name='error.txt', msg='{} {} at {}'.format('error in connect:', self.e, datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")))
 			print('wrote to error.txt! error in connect!')
 			quit()
-		time.sleep(2) #gives time for sensor to boot up if not connecting
+		time.sleep(2)
 	def disconnect(self, wait_for=5):
 		self.wait_for = wait_for
 		self.ser.flushInput()
@@ -42,7 +42,7 @@ class Sensor:
 				failed_disconnect = True
 				self.e = e
 		if failed_disconnect:
-			write_file(f_name='error.txt', msg='{} {} at {}\n'.format('error in disconnect:',self.e, datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")))
+			write_file(f_name='error.txt', msg='{} {} at {}'.format('error in disconnect:', self.e, datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")))
 			print('wrote to error.txt! error in disconnect!')
 			quit()
 		time.sleep(2)
@@ -61,7 +61,7 @@ class Sensor:
 					self.ser.write(bytes('do sample','utf-8'))
 					self.ser.write(bytes('\r\n','utf-8'))
 					self.ser_bytes = self.ser.readline()
-					sensor_data = ' '.join(self.ser_bytes.decode('utf-8').strip().split()[-3::2]) + '\n'
+					sensor_data = ' '.join(self.ser_bytes.decode('utf-8').strip().split()[-1*(len(data_names)-1)*2-1::2])
 					failed_conductivity = False
 					break
 				except Exception as e:
@@ -69,21 +69,21 @@ class Sensor:
 					self.e = e
 			if failed_conductivity:
 				write_file(f_name='error.txt', msg='{} {} at {}\n'.format('error in do_sample:', self.e, datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")))
-				print('wrote to error.txt! error in Conductivity.get_sample!') #can be removed in final version
+				print('wrote to error.txt! error in get_sample!')
 				quit()
 			else:
-				if len(sensor_data.split()) == 2:
-					write_file(f_name='sensor_data.txt', msg='{} Conductivity: {} Temperature: {}\n'.format(datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S"), sensor_data.split()[0], sensor_data.split()[1]))
-					print('{} Conductivity: {} Temperature: {}\n'.format(datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S"), sensor_data.split()[0], sensor_data.split()[1]))
+				if len(sensor_data.split()) == len(data_names):
+					write_file(f_name='sensor_data.txt', msg='{} {}'.format(datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S"), ' '.join([str(data_point) for data_tuple in list(zip(list(map(lambda x: x + ':', data_names)), sensor_data.split())) for data_point in data_tuple])))
+					print(' '.join([str(data_point) for data_tuple in list(zip(list(map(lambda x: x + ':', data_names)), sensor_data.split())) for data_point in data_tuple]))
 					self.written_samples += 1
 			time.sleep(interval)
 		time.sleep(2)
 
 
-sensor = Sensor(port='/dev/ttyUSB0', baudrate='9600', timeout=5, wait_for=5)
+sensor = Sensor(port='/dev/ttyUSB0', baudrate='9600', timeout=5, wait_for=5) #controls whichever sensor is currently plugged in
 sensor.connect(wait_for=5)
 #Conductivity
-#sensor.do_sample(data_names=['Conductivity', 'Temperature'], n_samples=6, interval=3, wait_for=40) #checks that both data sets are being compiled
+sensor.do_sample(data_names=['Conductivity', 'Temperature'], n_samples=6, interval=3, wait_for=40)
 #Oxygen
-sensor.do_sample(data_names=['Oxygen', 'Saturation', 'Temperature'], n_samples=6, interval=3, wait_for=40)
-sensor.disconnect(wait_for=5) #disconnects sensor at end of program
+sensor.do_sample(data_names=['Oxygen', 'Saturation', 'Temperature'], n_samples=6, interval=3, wait_for=40) #will have a different port once other board is created
+sensor.disconnect(wait_for=5)
