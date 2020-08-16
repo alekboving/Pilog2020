@@ -1,7 +1,7 @@
 import serial, time, datetime
 
 def write_file(f_name='error.txt', msg='you didn\'t pass any arguments to write_file'): #error function
-	with open('/home/pi/Ocean-Sensor/' + f_name, 'a') as f:
+	with open('/home/pi/Pilog2020/' + f_name, 'a') as f:
 		f.write(msg)
 
 class Sensor:
