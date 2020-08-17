@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import serial, time, datetime
 
 def write_file(f_name='error.txt', msg='you didn\'t pass any arguments to write_file'): #error function
@@ -73,7 +74,7 @@ class Sensor:
 				quit()
 			else:
 				if len(sensor_data.split()) == len(data_names):
-					write_file(f_name='sensor_data.txt', msg='{} {}'.format(datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S"), ' '.join([str(data_point) for data_tuple in list(zip(list(map(lambda x: x + ':', data_names)), sensor_data.split())) for data_point in data_tuple])))
+					write_file(f_name='sensor_data.txt', msg='{} {}\n'.format(datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S"), ' '.join([str(data_point) for data_tuple in list(zip(list(map(lambda x: x + ':', data_names)), sensor_data.split())) for data_point in data_tuple])))
 					print(' '.join([str(data_point) for data_tuple in list(zip(list(map(lambda x: x + ':', data_names)), sensor_data.split())) for data_point in data_tuple]))
 					self.written_samples += 1
 			time.sleep(interval)
