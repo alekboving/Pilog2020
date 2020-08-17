@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import serial, time, datetime
 
 def write_file(f_name='error.txt', msg='you didn\'t pass any arguments to write_file'): #error function
