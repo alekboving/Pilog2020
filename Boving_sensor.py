@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-import serial, time, datetime
+import serial, time, datetime, os
 
 def write_file(f_name='error.txt', msg='you didn\'t pass any arguments to write_file'): #error function
-	with open('/home/pi/Pilog2020/' + f_name, 'a') as f:
+	with open('/home/pi/Pilog2020/' + f_name, 'a') as f: #/home/pi/Pilog2020/
 		f.write(msg)
 
 class Sensor:
@@ -25,7 +25,7 @@ class Sensor:
 		        failed_connection = True
 		        self.e = e
 		if failed_connection:
-			write_file(f_name='error.txt', msg='{} {} at {}'.format('error in connect:', self.e, datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")))
+			write_file(f_name='error.txt', msg='{} {} at {}\n'.format('error in connect:', self.e, datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")))
 			print('wrote to error.txt! error in connect!')
 			quit()
 		time.sleep(2)
@@ -43,7 +43,7 @@ class Sensor:
 				failed_disconnect = True
 				self.e = e
 		if failed_disconnect:
-			write_file(f_name='error.txt', msg='{} {} at {}'.format('error in disconnect:', self.e, datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")))
+			write_file(f_name='error.txt', msg='{} {} at {}\n'.format('error in disconnect:', self.e, datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")))
 			print('wrote to error.txt! error in disconnect!')
 			quit()
 		time.sleep(2)
@@ -80,7 +80,7 @@ class Sensor:
 			time.sleep(interval)
 		time.sleep(2)
 
-
+#Main code
 sensor = Sensor(port='/dev/ttyUSB0', baudrate='9600', timeout=5, wait_for=5) #controls whichever sensor is currently plugged in
 sensor.connect(wait_for=5)
 #Conductivity
@@ -88,3 +88,4 @@ sensor.do_sample(data_names=['Conductivity', 'Temperature'], n_samples=6, interv
 #Oxygen
 #sensor.do_sample(data_names=['Oxygen', 'Saturation', 'Temperature'], n_samples=6, interval=3, wait_for=40) #will have a different port once other board is created
 sensor.disconnect(wait_for=5)
+os.system('sudo shutdown -r 0')

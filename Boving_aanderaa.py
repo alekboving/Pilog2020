@@ -2,7 +2,7 @@ import serial
 from datetime import datetime
 
 try: #checks to see if sensor is connected
-    ser = serial.Serial('COM6')
+    ser = serial.Serial('COM3')
     ser.flushInput()
 except:
     print("error sensor not connected")
